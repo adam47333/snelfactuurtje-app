@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SnelFactuurtje</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#007bff">
+  <link rel="apple-touch-icon" href="/static/icons/icon-192x192.png">
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+      .then(function() { console.log("Service Worker Registered"); });
+    }
+  </script>
+  <style>
+    body {
+      background-color: #f0f4f8;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #007bff;
+      font-size: 1.8em;
+    }
+    .block {
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    .bedrijf {
+      background-color: #e0f0ff;
+    }
+    .klant {
+      background-color: #ffe6cc;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: 500;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      font-size: 1em;
+    }
+    .dienst-block {
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 10px;
+      margin-top: 10px;
+      position: relative;
+      background-color: #f9f9f9;
+    }
+    .remove-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: red;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 25px;
+      height: 25px;
+      font-size: 1.2em;
+      cursor: pointer;
+      line-height: 0;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 30px;
+      background-color: #007bff;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      box-sizing: border-box;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+      h1 {
+        font-size: 1.5em;
+      }
+      button {
+        font-size: 16px;
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>SnelFactuurtje 🚀</h1>
+    <form method="POST" enctype="multipart/form-data">
+      <label>Factuurnummer:</label>
+      <input name="factuurnummer" placeholder="Bijv. FACT-2025-001" required>
+
+      <div class="block bedrijf">
+        <h2>🏢 Bedrijfsgegevens</h2>
+        <label>Bedrijfsnaam:</label>
+        <input name="bedrijfsnaam" required>
+        <label>Straat en huisnummer:</label>
+        <input name="straat" required>
+        <label>Postcode:</label>
+        <input name="postcode" required>
+        <label>Plaats:</label>
+        <input name="plaats" required>
+        <label>Land:</label>
+        <input name="land" required>
+        <label>KvK-nummer:</label>
+        <input name="kvk" required>
+        <label>BTW-nummer:</label>
+        <input name="btw" required>
+        <label>IBAN-nummer:</label>
+        <input name="iban" required>
+      </div>
+
+      <div class="block klant">
+        <h2>🧑‍💼 Klantgegevens</h2>
+        <label>Klantnaam:</label>
+        <input name="klantnaam" required>
+        <label>Straat en huisnummer:</label>
+        <input name="klant_straat" required>
+        <label>Postcode:</label>
+        <input name="klant_postcode" required>
+        <label>Plaats:</label>
+        <input name="klant_plaats" required>
+        <label>Land:</label>
+        <input name="klant_land" required>
+      </div>
+
+      <div id="diensten"></div>
+      <button type="button" onclick="voegDienstToe()">➕ Dienst toevoegen</button>
+
+      <label>Upload jouw logo (optioneel):</label>
+      <input type="file" name="logo">
+      <button type="submit">📄 Factuur Downloaden</button>
+    </form>
+  </div>
+
+  <script>
+    let dienstIndex = 0;
+    function voegDienstToe() {
+      const container = document.getElementById('diensten');
+      const div = document.createElement('div');
+      div.className = 'dienst-block';
+      div.innerHTML = `
+        <button type='button' class='remove-btn' onclick='this.parentNode.remove()'>×</button>
+        <label>Dienst:</label>
+        <input name='dienst_${dienstIndex}' required>
+        <label>Aantal:</label>
+        <input name='aantal_${dienstIndex}' type='number' required>
+        <label>Prijs per stuk:</label>
+        <input name='prijs_${dienstIndex}' type='number' step='0.01' required>
+        <label>BTW-percentage:</label>
+        <select name='btw_${dienstIndex}'>
+          <option value='0'>0%</option>
+          <option value='9'>9%</option>
+          <option value='21' selected>21%</option>
+        </select>
+      `;
+      container.appendChild(div);
+      dienstIndex++;
+    }
+  </script>
+</body>
+</html>
